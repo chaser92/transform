@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Transform 2D</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="styles/bootstrap.css" rel="stylesheet">
+
+    <!-- Add custom CSS here -->
+
+  </head>
+
+  <body>
+   <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Transform</a>
+        <div class="nav-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+    <div id="container">
+      <br/>
+      <br />
+            <canvas id="canv" style="width: 800px; height: 400px" width="800" height="400">
+
+      </canvas>
+      <div class="well">
+        Enter transform here:
+        <textarea id="mtxText" style="width: 90%">1,0,0,1</textarea>
+        <button class="btn" onclick="setTransform()">Apply</button>
+        <button class="btn" onclick="animNext()">Anim</button>
+        <button class="btn" onclick="animStop()">Stop</button>
+        Usage: type matrix [[x,y][z,t]] as: x,y,z,t ; <b>a</b> is a special variable animated from 0 to 10 by 0.1 ; identity matrix: 1,0,0,1
+      </div>
+
+    </div>
+    <script type="text/javascript">
+    var drawType = "triangle";
+    var transformMatrix = [1,0,0,0,1,0];
+    var sin = Math.sin;
+    var a = 0;
+    var stopAnim = false;
+    var pi = Math.PI;
+    var cos = Math.cos;
+    function setTransform()
+    {
+        eval('transformMatrix = [' + document.getElementById("mtxText").value + ']');
+        renderDwg();
+    }
+    function animNext()
+    {
+        if (stopAnim)
+        {
+          stopAnim = false;
+          return;
+        }
+        a+=0.1;
+        a %= 10;
+        setTransform();
+        setTimeout(animNext, 200);
+    }
+
+    function animStop()
+    {
+     a=0;
+      stopAnim = true;
+    }
+      function renderDwg()
+      {
+        switch(drawType)
+        {
+          case "triangle":
+            var c=document.getElementById("canv");
+            var ctx=c.getContext("2d");
+            ctx.fillStyle="#FFFFFF";
+            ctx.fillRect(0,0,10000,10000);
+
+            ctx.save();
+
+            ctx.beginPath();
+         ctx.moveTo(0, 200);
+         ctx.lineTo(10000, 200);
+          ctx.stroke();
+        ctx.moveTo(200, 0);
+         ctx.lineTo(200, 10000);
+          ctx.stroke();
+ctx.closePath();
+            ctx.translate(200,200);
+            if (transformMatrix.length == 4)
+              ctx.transform(transformMatrix[0], transformMatrix[2], transformMatrix[1], transformMatrix[3], 0, 0);
+            else
+              ctx.transform(transformMatrix[0], transformMatrix[3], transformMatrix[1], transformMatrix[4], transformMatrix[2], transformMatrix[5]);
+            ctx.fillStyle="#A2322E";
+            ctx.beginPath();
+            // Draw a triangle location for each corner from x:y 100,110 -> 200,10 -> 300,110 (it will return to first point)
+            ctx.moveTo(0,110);
+            ctx.lineTo(100,10);
+            ctx.lineTo(200,110);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+            break;
+        }
+      }
+
+      renderDwg();
+    </script>
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="jquery.js"></script>
+    <!-- Put this into a custom JavaScript file to make things more organized -->
+  </body>
+</html>
